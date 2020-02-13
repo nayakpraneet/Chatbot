@@ -1,0 +1,43 @@
+k<?php
+  //session_start();
+  if($test != '')
+  {
+      $test == $_GET["ooo"];
+      echo 'name: '.$test;
+  }
+  else
+  {
+  /*if($name == 'Praneet')
+  {
+    header('Location: http://localhost:81/chatbot_v4/index.php');
+    #echo 'name: '.$name;
+    
+   # session_destroy();
+    die();
+  }*/
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<title> Login Form in HTML5 and CSS3</title>
+ <link rel="stylesheet" a href="loginstyle.css">
+</head>
+<body>
+
+<form name="form" action="index.php" method="GET">
+    <input id ="ooo" type="text" name="ooo" placeholder="Enter the User Name"/>
+    <input type="button" value="Log In" onclick= location.href="login.php">
+</form>
+</body>
+  
+<script>
+    $('.btn').click(function()
+    { 
+        $.post('handlers/sqliteConnector.php?action=insertName='+name, function(response)
+        {
+            $('#name').val('');
+        });        
+    });
+</script>
+</html>
+  <?php } ?>

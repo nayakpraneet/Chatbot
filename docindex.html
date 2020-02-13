@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>GCA Document Finder</title>
+        <link rel="stylesheet" type="text/css" href="style.css"> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+       <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"></script> -->
+        <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>    
+    </head>
+    <body>
+        <header>
+               <!--Displays Heading Welcome Message-->
+               <center><p id ="welcome">Welcome to Document Finder</p></center>
+        </header>
+
+        <div class="mainClass">
+             <div class="sideBar"> <br>
+                  <a href="index.php"><button class="btn1">Chat Assistant</button></a>
+             </div>
+             <div class="mainBar">
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="clearDocs">Clear Chats</button>
+                  <div  class="chatbox">
+                        <div class="chatlogs">
+                             <div class="chat bot" style="display: flex;flex-flow: row wrap;align-items: flex-start;margin-bottom: 7px;">  
+                                  <div class="user-photo" style="width: 35px;height: 35px;background: #ccc;border-radius: 50%;overflow: hidden;"><img src="chatbot.jpg" style="width: 100%;"></div>
+                                  <p class="chat-message" style="width: 85%;padding: 10px; margin: 5px 10px 0;background: #99ffbb;border-radius: 10px;color: #fff;font-size: 13px;color: #000000; font-family:Segoe UI; ">Hello, What document do you want to find?</p>
+                             </div>
+                             <div class ="text">
+                             </div>
+                        </div>
+                        <form>
+                              <div class="chat-form">
+                                   <textarea id="ta" class="txt1"></textarea>
+                                   <button class="btn2">Send</button>
+                              </div>
+                        </form>
+                  </div>
+             </div>
+        </div>
+        <script>
+            $(document).ready(function ()
+            {
+                loadChat();
+            });
+            
+            $('.btn2').click(function()
+            { 
+                 var message = $('#ta').val();
+                 $.post('handlers/sqliteConnector.php?action=insertDocumentQuery&message='+message, function(response)
+                 {
+                    // Loading previous chats
+                    try
+                    {
+                        // Loading previous chats
+                        loadChat();
+                    }
+                    catch(err)
+                    {
+                        alert("Cant load the chats");
+                    } 
+                    // Clearing the input box
+                     $('#ta').val('');
+                    // Running the python code
+                    <?php
+                    try
+                    {
+                       shell_exec(" python C:\\xampp\\htdocs\\ChatBot_v4\\documentFinder.py");
+                    }
+                    catch(Exception $e)
+                    {
+                        echo "Cant execute the Python: Document_Finder";
+                    }
+                    ?>
+                 });
+            });
+            
+            function loadChat()
+            {
+                 $.post('handlers/sqliteConnector.php?action=getDocumentQuery', function(response)
+                 {
+                   $('.text').html(response);
+                 });
+            }
+            $('#clearDocs').click(function()
+            {
+                $.post('handlers/sqliteConnector.php?action=clearandCopyDoc', function(response)
+                 {
+                 });
+                 try
+                {
+                   updateDivDoc();
+                }
+                catch(Exception)
+                {
+                    console.log("Error in clearing previous chat logs");
+                } 
+            });
+            
+            function insertLikeDoc()
+            {
+                $.post('handlers/sqliteConnector.php?action=insertLikeDoc', function(response)
+                 {
+                   
+                 });
+            }
+            function insertUnlikeDoc()
+            {
+                $.post('handlers/sqliteConnector.php?action=insertUnlikeDoc', function(response)
+                 {
+                   
+                 });
+            }
+            function updateDivDoc()
+             {
+               $(".chatlogs").load(window.location.href + " .chatlogs");
+             }
+       </script>
+    </body>
+</html>
